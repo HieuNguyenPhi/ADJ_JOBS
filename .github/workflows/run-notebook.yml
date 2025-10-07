@@ -24,10 +24,14 @@ jobs:
       - name: Install deps
         run: pip install -r requirements.txt
 
+      - name: Register Jupyter kernel
+        run: python -m ipykernel install --user --name python3 --display-name "Python 3 (Actions)"
+      
       - name: Execute notebook with papermill
         run: |
           mkdir -p outputs
           papermill notebooks/ADJUST_JOB.ipynb outputs/ADJUST_JOB_$(date -u +%Y-%m-%d).ipynb \
+            --kernel python3 \
             -p RUN_DATE "$(date -u +%Y-%m-%d)"
 
       - name: Upload artifact

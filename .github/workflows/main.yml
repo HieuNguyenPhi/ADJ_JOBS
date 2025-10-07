@@ -1,0 +1,50 @@
+name: Daily Notebook (runs 07:00 ICT)
+
+on:
+  schedule:
+    # GitHub Actions dùng UTC. 00:00 UTC = 07:00 ICT (Asia/Ho_Chi_Minh)
+    # Đổi giờ theo nhu cầu của bạn bằng cách cộng thêm 7 tiếng so với UTC.
+    - cron: "0 0 * * *"
+  workflow_dispatch: {}  # Cho phép chạy tay khi cần
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60  # đổi nếu notebook dài hơn (runner hosted giới hạn ~6h) 
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install deps
+        run: pip install -r requirements.txt
+
+      - name: Execute notebook with papermill
+        run: |
+          mkdir -p outputs
+          papermill notebooks/ADJUST_JOB.ipynb outputs/ADJUST_JOB_$(date -u +%Y-%m-%d).ipynb \
+            -p RUN_DATE "$(date -u +%Y-%m-%d)"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: daily-report
+          path: outputs/*
+          retention-days: 14
+      
+      - name: Commit results to repo
+        run: |
+          DATE=$(date +%Y-%m-%d)
+          DEST="reports/${DATE}"
+          mkdir -p "${DEST}"
+          cp outputs/* "${DEST}/"
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add "${DEST}"
+          git commit -m "Daily notebook ${DATE} [skip ci]" || echo "No changes"
+          git push

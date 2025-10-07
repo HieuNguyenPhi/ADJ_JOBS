@@ -22,7 +22,7 @@ jobs:
           cache: "pip"
 
       - name: Install deps
-        run: pip install -r requirements.txt
+        run: pip -q install -r requirements.txt
 
       - name: Register Jupyter kernel
         run: python -m ipykernel install --user --name python3 --display-name "Python 3 (Actions)"

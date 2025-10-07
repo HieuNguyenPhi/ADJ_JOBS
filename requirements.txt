@@ -9,5 +9,4 @@ polars
 datetime
 tqdm
 pathlib 
-glob
 shutil

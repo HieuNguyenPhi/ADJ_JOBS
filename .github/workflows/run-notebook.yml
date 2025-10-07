@@ -34,6 +34,10 @@ jobs:
         run: python -m ipykernel install --user --name python3 --display-name "Python 3 (Actions)"
       
       - name: Execute notebook with papermill
+        env:
+          ACCOUNT_KEY: ${{ secrets.ACCOUNT_KEY }}
+          ACCOUNT_NAME: ${{ secrets.ACCOUNT_NAME }}
+          CONTAINER_NAME: ${{ vars.CONTAINER_NAME }} 
         run: |
           mkdir -p outputs
           papermill notebooks/ADJUST_JOB.ipynb outputs/ADJUST_JOB_$(date -u +%Y-%m-%d).ipynb \

@@ -1,10 +1,6 @@
 papermill
 pandas
-adlfs 
-fsspec 
-azure-identity 
-azure-ai-ml 
-azure-cli 
+azure-storage-blob
 polars
 datetime
 tqdm

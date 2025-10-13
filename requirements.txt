@@ -1,6 +1,7 @@
 papermill
 pandas
 azure-storage-blob
+adlfs
 polars
 datetime
 tqdm
